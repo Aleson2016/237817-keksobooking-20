@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ale Son](https://up.htmlacademy.ru/javascript/20/user/237817).
-* Наставник: `Неизвестно`.
+* Наставник: `Нет наставника`.
 
 ---
 
