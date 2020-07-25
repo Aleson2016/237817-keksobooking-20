@@ -8,8 +8,6 @@
 
   var form = document.querySelector('.ad-form');
 
-  var propertyAddress = form.querySelector('#address');
-
   var propertyType = form.querySelector('#type');
 
   var propertyPrice = form.querySelector('#price');

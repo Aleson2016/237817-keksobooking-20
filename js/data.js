@@ -43,7 +43,10 @@
     return items;
   };
 
-  window.flats = [];
+  window.data = {
+    flats: []
+  };
+
   var avatars = getMixedArray(MIN_NUMBER, MAX_NUMBER);
   var locations = [];
 
@@ -53,7 +56,7 @@
       y: getRandomNumber(MIN_Y, MAX_Y),
     };
 
-    window.flats[i] = {
+    window.data.flats[i] = {
       'author': {
         'avatar': 'img/avatars/user0' + avatars[i] + '.png',
       },

@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var setDisplayNone = function (item) {
     if (item.textContent === '') {
       item.style.display = 'none';
@@ -16,7 +15,7 @@
 
   var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
 
-  var renderCard = function (item) {
+  window.card.renderCard = function (item) {
     var card = cardTemplate.cloneNode(true);
 
     card.querySelector('.popup__title').textContent = item.offer.title;
@@ -88,5 +87,4 @@
 
     return card;
   };
-
 })();
