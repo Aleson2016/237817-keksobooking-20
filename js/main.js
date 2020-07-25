@@ -18,13 +18,13 @@
 
   var propertyAddress = form.querySelector('#address');
 
-  var getDefaultAddress = function (width) {
+  var getDefaultAddress = function () {
     propertyAddress.value = (parseInt(mainPin.style.left, 10) + MAINPIN_WIDTH_DEFAULT / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAINPIN_WIDTH_DEFAULT / 2);
   };
 
   var getActiveAddress = function () {
     propertyAddress.value = (parseInt(mainPin.style.left, 10) + MAINPIN_WIDTH_ACTIVE / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAINPIN_WIDTH_ACTIVE + MAINPIN_TAIL);
-  }
+  };
 
   var blockPage = function () {
     for (var i = 0; i < pins.length; i++) {
