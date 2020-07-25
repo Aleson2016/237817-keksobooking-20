@@ -70,5 +70,4 @@
   window.map.map.insertBefore(fragmentCard, mapFiltersBlock);
 
   var cards = window.map.map.querySelectorAll('.map__card');
-
 })();
