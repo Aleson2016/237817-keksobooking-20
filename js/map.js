@@ -14,12 +14,16 @@
     if (evt.key === 'Escape') {
       evt.preventDefault();
 
+      var cards = window.map.map.querySelectorAll('.map__card');
+
       for (var i = 0; i < cards.length; i++) {
         if (cards[i].style.display === 'block') {
           cards[i].style.display = 'none';
         }
       }
-      closePopup(cardItem);
+      isClosed = true;
+
+      document.removeEventListener('keydown', onPopupEscPress);
     }
   };
 
@@ -39,7 +43,7 @@
     document.removeEventListener('keydown', onPopupEscPress);
   };
 
-  var addOnPinOpen = function (cardItem) {
+  var addOnPinOpen = function (cardItem, pinItem) {
     pinItem.addEventListener('click', function () {
       if (isClosed) {
         openPopup(cardItem);
@@ -53,21 +57,23 @@
     });
   };
 
-  var fragmentPin = document.createDocumentFragment();
-  var fragmentCard = document.createDocumentFragment();
+  var onSuccess = function (flats) {
+    var fragmentPin = document.createDocumentFragment();
+    var fragmentCard = document.createDocumentFragment();
 
-  for (var i = 0; i < window.data.flats.length; i++) {
-    var cardItem = window.card.renderCard(window.data.flats[i]);
-    fragmentCard.appendChild(cardItem);
-    addOnCardClose(cardItem);
+    for (var i = 0; i < flats.length; i++) {
+      var cardItem = window.card.renderCard(flats[i]);
+      fragmentCard.appendChild(cardItem);
+      addOnCardClose(cardItem);
 
-    var pinItem = window.pin.renderPin(window.data.flats[i]);
-    fragmentPin.appendChild(pinItem);
-    addOnPinOpen(cardItem);
-  }
+      var pinItem = window.pin.renderPin(flats[i]);
+      fragmentPin.appendChild(pinItem);
+      addOnPinOpen(cardItem, pinItem);
+    }
 
-  window.map.pinBlock.appendChild(fragmentPin);
-  window.map.map.insertBefore(fragmentCard, mapFiltersBlock);
+    window.map.pinBlock.appendChild(fragmentPin);
+    window.map.map.insertBefore(fragmentCard, mapFiltersBlock);
+  };
 
-  var cards = window.map.map.querySelectorAll('.map__card');
+  window.backend.download(onSuccess, window.backend.onError);
 })();

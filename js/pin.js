@@ -6,6 +6,8 @@
   window.pin.renderPin = function (item) {
     var pin = pinTemplate.cloneNode(true);
 
+    pin.style.display = 'none';
+
     pin.style.left = item.location.x + 'px';
     pin.style.top = item.location.y + 'px';
 
