@@ -8,8 +8,6 @@
   var Y_MIN = 130;
   var Y_MAX = 630;
 
-  var pins = window.map.map.querySelectorAll('button[type="button"]');
-
   var mainPin = window.map.pinBlock.querySelector('.map__pin--main');
 
   var form = document.querySelector('.ad-form');
@@ -18,18 +16,18 @@
 
   var propertyAddress = form.querySelector('#address');
 
-  var getDefaultAddress = function (width) {
+  var getDefaultAddress = function () {
     propertyAddress.value = (parseInt(mainPin.style.left, 10) + MAINPIN_WIDTH_DEFAULT / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAINPIN_WIDTH_DEFAULT / 2);
   };
 
   var getActiveAddress = function () {
     propertyAddress.value = (parseInt(mainPin.style.left, 10) + MAINPIN_WIDTH_ACTIVE / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAINPIN_WIDTH_ACTIVE + MAINPIN_TAIL);
-  }
+  };
 
   var blockPage = function () {
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].style.display = 'none';
-    }
+    // for (var i = 0; i < pins.length; i++) {
+    //   pins[i].style.display = 'none';
+    // }
 
     for (var j = 0; j < fieldsetItems.length; j++) {
       fieldsetItems[j].setAttribute('disabled', 'true');
@@ -40,6 +38,8 @@
 
   var activatePage = function () {
     window.map.map.classList.remove('map--faded');
+
+    var pins = window.map.map.querySelectorAll('button[type="button"]');
 
     for (var i = 0; i < pins.length; i++) {
       pins[i].style.display = 'block';
