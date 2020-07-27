@@ -58,7 +58,9 @@
 
     card.querySelector('.popup__description').textContent = item.offer.description;
 
-    if (item.offer.photos.length === 1) {
+    if (item.offer.photos.length < 1) {
+      card.querySelector('.popup__photo').style.display = 'none';
+    } else if (item.offer.photos.length === 1) {
       card.querySelector('.popup__photo').src = item.offer.photos;
     } else {
       card.querySelector('.popup__photo').src = item.offer.photos[0];
@@ -79,8 +81,8 @@
 
     var cardTags = card.children;
 
-    for (var i = 0; i < cardTags.length; i++) {
-      setDisplayNone(cardTags[i]);
+    for (var a = 0; a < cardTags.length; a++) {
+      setDisplayNone(cardTags[a]);
     }
 
     card.style.display = 'none';
