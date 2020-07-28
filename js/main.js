@@ -12,7 +12,7 @@
 
   var form = document.querySelector('.ad-form');
 
-  var fieldsetItems = form.children;
+  var formItems = form.children;
 
   var propertyAddress = form.querySelector('#address');
 
@@ -26,8 +26,16 @@
     propertyAddress.value = (parseInt(window.main.mainPin.style.left, 10) + MAINPIN_WIDTH_ACTIVE / 2) + ', ' + (parseInt(window.main.mainPin.style.top, 10) + MAINPIN_WIDTH_ACTIVE + MAINPIN_TAIL);
   };
 
+  var blockForm = function (items) {
+    for (var i = 0; i < items.length; i++) {
+      items[i].setAttribute('disabled', 'true');
+    }
+  };
+
   window.main = {
     mainPin: window.map.pinBlock.querySelector('.map__pin--main'),
+
+    filtersItems: window.map.filtersForm.children,
 
     blockPage: function () {
       if (!window.map.map.classList.contains('map--faded')) {
@@ -40,9 +48,9 @@
         pins[i].style.display = 'none';
       }
 
-      for (var j = 0; j < fieldsetItems.length; j++) {
-        fieldsetItems[j].setAttribute('disabled', 'true');
-      }
+      blockForm(formItems);
+
+      blockForm(window.main.filtersItems);
 
       getDefaultAddress();
     },
@@ -67,6 +75,12 @@
 
         window.main.mainPin.removeEventListener('keydown', window.main.onEnterPress);
       }
+    },
+
+    activateForm: function (items) {
+      for (var i = 0; i < items.length; i++) {
+        items[i].removeAttribute('disabled');
+      }
     }
 
   };
@@ -80,9 +94,7 @@
       pins[i].style.display = 'block';
     }
 
-    for (var k = 0; k < fieldsetItems.length; k++) {
-      fieldsetItems[k].removeAttribute('disabled');
-    }
+    window.main.activateForm(formItems);
 
     getActiveAddress();
   };
