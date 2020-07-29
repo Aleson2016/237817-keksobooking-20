@@ -267,27 +267,21 @@
       if (checkedFilters.length === 0 && checkedFeatures.length === 0) {
         renderPinCard(flats);
       } else if (checkedFilters.length > 0 && checkedFeatures.length === 0) {
-        // var selectedFlats = filterSelects(checkedFilters);
-        //
-        // renderFilteredFlats(filterSelects(checkedFilters));
+        var selectedFlats = filterSelects(checkedFilters);
 
-        window.debounce(renderFilteredFlats(filterSelects(checkedFilters)));
+        renderFilteredFlats(selectedFlats);
 
       } else if (checkedFilters.length === 0 && checkedFeatures.length > 0) {
-        // var similarFlats = filterFeatures(checkedFeatures, flats);
-        //
-        // renderFilteredFlats(similarFlats);
+        var similarFlats = filterFeatures(checkedFeatures, flats);
 
-        window.debounce(renderFilteredFlats(filterFeatures(checkedFeatures, flats)));
+        renderFilteredFlats(similarFlats);
 
       } else if (checkedFilters.length > 0 && checkedFeatures.length > 0) {
-        // selectedFlats = filterSelects(checkedFilters);
-        //
-        // similarFlats = filterFeatures(checkedFeatures, selectedFlats);
-        //
-        // renderFilteredFlats(similarFlats);
+        selectedFlats = filterSelects(checkedFilters);
 
-        window.debounce(renderFilteredFlats(filterFeatures(checkedFeatures, filterSelects(checkedFilters))));
+        similarFlats = filterFeatures(checkedFeatures, selectedFlats);
+
+        renderFilteredFlats(similarFlats);
       }
 
       var pins = window.map.map.querySelectorAll('button[type="button"]');
