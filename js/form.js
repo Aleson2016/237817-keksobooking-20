@@ -1,10 +1,12 @@
 'use strict';
 
 (function () {
-  var MIN_PRICE_BUNGALO = 0;
-  var MIN_PRICE_FLAT = 1000;
-  var MIN_PRICE_HOUSE = 5000;
-  var MIN_PRICE_PALACE = 10000;
+  var minPrice = {
+    BUNGALO: 0,
+    FLAT: 1000,
+    HOUSE: 5000,
+    PALACE: 10000
+  };
 
   var form = document.querySelector('.ad-form');
 
@@ -37,14 +39,14 @@
   var main = document.querySelector('main');
 
   var validatePriceType = function () {
-    if (propertyType.value === 'bungalo' && propertyPrice.value < MIN_PRICE_BUNGALO) {
-      propertyPrice.setCustomValidity('Минимальная цена бунгало за ночь ' + MIN_PRICE_BUNGALO);
-    } else if (propertyType.value === 'flat' && propertyPrice.value < MIN_PRICE_FLAT) {
-      propertyPrice.setCustomValidity('Минимальная цена квартиры за ночь ' + MIN_PRICE_FLAT);
-    } else if (propertyType.value === 'house' && propertyPrice.value < MIN_PRICE_HOUSE) {
-      propertyPrice.setCustomValidity('Минимальная цена дома за ночь ' + MIN_PRICE_HOUSE);
-    } else if (propertyType.value === 'palace' && propertyPrice.value < MIN_PRICE_PALACE) {
-      propertyPrice.setCustomValidity('Минимальная цена дворца за ночь ' + MIN_PRICE_PALACE);
+    if (propertyType.value === 'bungalo' && propertyPrice.value < minPrice.BUNGALO) {
+      propertyPrice.setCustomValidity('Минимальная цена бунгало за ночь ' + minPrice.BUNGALO);
+    } else if (propertyType.value === 'flat' && propertyPrice.value < minPrice.FLAT) {
+      propertyPrice.setCustomValidity('Минимальная цена квартиры за ночь ' + minPrice.FLAT);
+    } else if (propertyType.value === 'house' && propertyPrice.value < minPrice.HOUSE) {
+      propertyPrice.setCustomValidity('Минимальная цена дома за ночь ' + minPrice.HOUSE);
+    } else if (propertyType.value === 'palace' && propertyPrice.value < minPrice.PALACE) {
+      propertyPrice.setCustomValidity('Минимальная цена дворца за ночь ' + minPrice.PALACE);
     } else {
       propertyPrice.setCustomValidity('');
     }
@@ -53,7 +55,9 @@
   var validateRoomsCapacity = function () {
     if (propertyRooms.value === '1' && propertyCapacity.value !== '1') {
       propertyCapacity.setCustomValidity('1 комната только для 1 гостя');
-    } else if (propertyRooms.value === '2' && (propertyCapacity.value !== '1' || propertyCapacity.value !== '2')) {
+    } else if (propertyRooms.value === '2' && propertyCapacity.value === '0') {
+      propertyCapacity.setCustomValidity('2 комнаты только для 1 или 2 гостей');
+    } else if (propertyRooms.value === '2' && propertyCapacity.value === '3') {
       propertyCapacity.setCustomValidity('2 комнаты только для 1 или 2 гостей');
     } else if (propertyRooms.value === '3' && propertyCapacity.value === '0') {
       propertyCapacity.setCustomValidity('3 комнаты только для 1, 2 или 3 гостей');
@@ -66,13 +70,13 @@
 
   var setPricePlaceholder = function () {
     if (propertyType.value === 'bungalo') {
-      propertyPrice.placeholder = '' + MIN_PRICE_BUNGALO;
+      propertyPrice.placeholder = '' + minPrice.BUNGALO;
     } else if (propertyType.value === 'flat') {
-      propertyPrice.placeholder = '' + MIN_PRICE_FLAT;
+      propertyPrice.placeholder = '' + minPrice.FLAT;
     } else if (propertyType.value === 'house') {
-      propertyPrice.placeholder = '' + MIN_PRICE_HOUSE;
+      propertyPrice.placeholder = '' + minPrice.HOUSE;
     } else if (propertyType.value === 'palace') {
-      propertyPrice.placeholder = '' + MIN_PRICE_PALACE;
+      propertyPrice.placeholder = '' + minPrice.PALACE;
     }
   };
 
@@ -168,6 +172,8 @@
   });
 
   form.addEventListener('input', function (evt) {
+    validateRoomsCapacity();
+
     if (evt.target.id === 'type') {
       setPricePlaceholder();
       validatePriceType();
@@ -183,10 +189,6 @@
 
     if (evt.target.id === 'timeout') {
       propertyCheckin.value = propertyCheckout.value;
-    }
-
-    if (evt.target.id === 'room__number' || evt.target.id === 'capacity') {
-      validateRoomsCapacity();
     }
   });
 
