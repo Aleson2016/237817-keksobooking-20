@@ -48,9 +48,9 @@
 
       var cards = window.map.map.querySelectorAll('.map__card');
 
-      for (var i = 0; i < cards.length; i++) {
-        if (cards[i].style.display === 'block') {
-          cards[i].style.display = 'none';
+      for (var j = 0; j < cards.length; j++) {
+        if (cards[j].style.display === 'block') {
+          cards[j].style.display = 'none';
         }
       }
 
@@ -97,7 +97,7 @@
 
   var addOnCardClose = function (cardItem) {
     cardItem.querySelector('.popup__close').addEventListener('click', function () {
-      closePopup(pinItem, cardItem);
+      closePopup(cardItem);
     });
   };
 
