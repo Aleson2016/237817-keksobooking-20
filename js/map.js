@@ -13,13 +13,38 @@
 
   var MAX_PIN_COUNT = 5;
 
-  var propertyTypeFilter = window.map.filtersBlock.querySelector('#housing-type');
+  var filtersNames = {
+    'housing-type': 'type',
+    'housing-price': 'price',
+    'housing-rooms': 'rooms',
+    'housing-guests': 'capacity',
+    'housing-features': 'features'
+  };
+
+  var prices = {
+    low: 10000,
+    high: 50000
+  };
+
+  var propertyFilterItems = window.map.filtersForm.querySelectorAll('select');
+
+  var propertyFeaturesFilter = window.map.filtersBlock.querySelector('#housing-features');
+
+  var propertyFeaturesItems = propertyFeaturesFilter.querySelectorAll('input[type="checkbox"]');
 
   var isClosed = true;
 
   var onPopupEscPress = function (evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+
+      var pins = window.map.map.querySelectorAll('button[type="button"]');
+
+      for (var i = 0; i < pins.length; i++) {
+        if (pins[i].classList.contains('.map__pin--active')) {
+          pins[i].classList.remove('.map__pin--active');
+        }
+      }
 
       var cards = window.map.map.querySelectorAll('.map__card');
 
@@ -28,13 +53,15 @@
           cards[i].style.display = 'none';
         }
       }
+
       isClosed = true;
 
       document.removeEventListener('keydown', onPopupEscPress);
     }
   };
 
-  var openPopup = function (cardItem) {
+  var openPopup = function (pinItem, cardItem) {
+    pinItem.classList.add('.map__pin--active');
     cardItem.style.display = 'block';
 
     isClosed = false;
@@ -42,7 +69,8 @@
     document.addEventListener('keydown', onPopupEscPress);
   };
 
-  var closePopup = function (cardItem) {
+  var closePopup = function (pinItem, cardItem) {
+    pinItem.classList.remove('.map__pin--active');
     cardItem.style.display = 'none';
 
     isClosed = true;
@@ -53,14 +81,23 @@
   var addOnPinOpen = function (cardItem, pinItem) {
     pinItem.addEventListener('click', function () {
       if (isClosed) {
-        openPopup(cardItem);
+        openPopup(pinItem, cardItem);
+      } else {
+        var cards = window.map.map.querySelectorAll('.map__card');
+
+        for (var i = 0; i < cards.length; i++) {
+          if (cards[i].style.display === 'block') {
+            cards[i].style.display = 'none';
+          }
+        }
+        openPopup(pinItem, cardItem);
       }
     });
   };
 
   var addOnCardClose = function (cardItem) {
     cardItem.querySelector('.popup__close').addEventListener('click', function () {
-      closePopup(cardItem);
+      closePopup(pinItem, cardItem);
     });
   };
 
@@ -95,6 +132,111 @@
     });
   };
 
+  var filter = {
+    'type': function (value, flats) {
+      var similarFlats = flats.filter(function (flat) {
+        return flat.offer.type === value;
+      });
+      return similarFlats;
+    },
+
+    'price': function (value, flats) {
+      if (value === 'low') {
+        var similarFlats = flats.filter(function (flat) {
+          return parseInt(flat.offer.price, 10) < prices.low;
+        });
+      } else if (value === 'middle') {
+        similarFlats = flats.filter(function (flat) {
+          return (parseInt(flat.offer.price, 10) >= prices.low && parseInt(flat.offer.price, 10) <= prices.high);
+        });
+      } else if (value === 'high') {
+        similarFlats = flats.filter(function (flat) {
+          return parseInt(flat.offer.price, 10) > prices.high;
+        });
+      }
+      return similarFlats;
+    },
+
+    'rooms': function (value, flats) {
+      var similarFlats = flats.filter(function (flat) {
+        return parseInt(flat.offer.rooms, 10) === parseInt(value, 10);
+      });
+      return similarFlats;
+    },
+
+    'capacity': function (value, flats) {
+      if (value === '1') {
+        var similarFlats = flats.filter(function (flat) {
+          return parseInt(flat.offer.guests, 10) === 1;
+        });
+      } else if (value === '2') {
+        similarFlats = flats.filter(function (flat) {
+          return parseInt(flat.offer.guests, 10) === 2;
+        });
+      } else if (value === '0') {
+        similarFlats = flats.filter(function (flat) {
+          return parseInt(flat.offer.guests, 10) >= 3;
+        });
+      }
+      return similarFlats;
+    }
+  };
+
+  var filterFeatures = function (checkedFeatures, flats) {
+    var similarFlats = [];
+
+    if (checkedFeatures.length === 1) {
+      similarFlats = flats.filter(function (flat) {
+        return flat.offer.features.indexOf(checkedFeatures[0].value) !== -1;
+      });
+    } else {
+      similarFlats = flats.filter(function (flat) {
+        return flat.offer.features.indexOf(checkedFeatures[0].value) !== -1;
+      });
+
+      for (var i = 1; i < checkedFeatures.length; i++) {
+        var filteredFlats = similarFlats.filter(function (similarFlat) {
+          return similarFlat.offer.features.indexOf(checkedFeatures[i].value) !== -1;
+        });
+        similarFlats = filteredFlats;
+      }
+    }
+    return similarFlats;
+  };
+
+  var filterSelects = function (checkedFilters) {
+    var selectedFlats = [];
+
+    if (checkedFilters.length === 1) {
+
+      var value = checkedFilters[0].value;
+      selectedFlats = filter[filtersNames[checkedFilters[0].name]](value, flats);
+
+    } else {
+
+      value = checkedFilters[0].value;
+      selectedFlats = filter[filtersNames[checkedFilters[0].name]](value, flats);
+
+      for (var i = 1; i < checkedFilters.length; i++) {
+        value = checkedFilters[i].value;
+
+        var filteredFlats = filter[filtersNames[checkedFilters[i].name]](value, selectedFlats);
+        selectedFlats = filteredFlats;
+      }
+    }
+
+    return selectedFlats;
+  };
+
+  var renderFilteredFlats = function (items) {
+    if (items.length <= MAX_PIN_COUNT) {
+      renderPinCard(items);
+    } else {
+      items.length = MAX_PIN_COUNT;
+      renderPinCard(items);
+    }
+  };
+
   var flats = [];
 
   var onSuccess = function (data) {
@@ -102,18 +244,51 @@
 
     renderPinCard(flats);
 
-    propertyTypeFilter.addEventListener('change', function (evt) {
+    window.map.filtersForm.addEventListener('change', function (evt) {
       evt.preventDefault();
 
       removePinCard();
 
-      var type = evt.target.value;
+      var checkedFilters = [];
+      var checkedFeatures = [];
 
-      var similarFlats = flats.filter(function (flat) {
-        return flat.offer.type === type;
+      propertyFilterItems.forEach(function (propertyFilterItem) {
+        if (propertyFilterItem.value !== 'any') {
+          checkedFilters.push(propertyFilterItem);
+        }
       });
 
-      renderPinCard(similarFlats);
+      propertyFeaturesItems.forEach(function (propertyFeaturesItem) {
+        if (propertyFeaturesItem.checked) {
+          checkedFeatures.push(propertyFeaturesItem);
+        }
+      });
+
+      if (checkedFilters.length === 0 && checkedFeatures.length === 0) {
+        renderPinCard(flats);
+      } else if (checkedFilters.length > 0 && checkedFeatures.length === 0) {
+        // var selectedFlats = filterSelects(checkedFilters);
+        //
+        // renderFilteredFlats(filterSelects(checkedFilters));
+
+        window.debounce(renderFilteredFlats(filterSelects(checkedFilters)));
+
+      } else if (checkedFilters.length === 0 && checkedFeatures.length > 0) {
+        // var similarFlats = filterFeatures(checkedFeatures, flats);
+        //
+        // renderFilteredFlats(similarFlats);
+
+        window.debounce(renderFilteredFlats(filterFeatures(checkedFeatures, flats)));
+
+      } else if (checkedFilters.length > 0 && checkedFeatures.length > 0) {
+        // selectedFlats = filterSelects(checkedFilters);
+        //
+        // similarFlats = filterFeatures(checkedFeatures, selectedFlats);
+        //
+        // renderFilteredFlats(similarFlats);
+
+        window.debounce(renderFilteredFlats(filterFeatures(checkedFeatures, filterSelects(checkedFilters))));
+      }
 
       var pins = window.map.map.querySelectorAll('button[type="button"]');
 

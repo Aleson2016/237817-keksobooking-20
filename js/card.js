@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  var houses = {
+    'flat': 'Квартира',
+    'bungalo': 'Бунгало',
+    'house': 'Дом',
+    'palace': 'Дворец'
+  };
+
   var setDisplayNone = function (item) {
     if (item.textContent === '') {
       item.style.display = 'none';
@@ -24,17 +31,11 @@
 
     card.querySelector('.popup__text--price').textContent = item.offer.price + ' ₽/ночь';
 
-    setDisplayNoneText(item.offer.price, item.offer.price, card.querySelector('.popup__text--price'));
-
-    if (item.offer.type === 'flat') {
-      card.querySelector('.popup__type').textContent = 'Квартира';
-    } else if (item.offer.type === 'bungalo') {
-      card.querySelector('.popup__type').textContent = 'Бунгало';
-    } else if (item.offer.type === 'house') {
-      card.querySelector('.popup__type').textContent = 'Дом';
-    } else if (item.offer.type === 'palace') {
-      card.querySelector('.popup__type').textContent = 'Дворец';
+    if (item.offer.price === '') {
+      card.querySelector('.popup__text--price').style.display = 'none';
     }
+
+    card.querySelector('.popup__type').textContent = houses[item.offer.type];
 
     card.querySelector('.popup__text--capacity').textContent = item.offer.rooms + ' комнаты для ' + item.offer.guests + ' гостей';
 
@@ -44,17 +45,16 @@
 
     setDisplayNoneText(item.offer.checkin, item.offer.checkout, card.querySelector('.popup__text--time'));
 
-    for (var j = 0; j < item.offer.features.length; j++) {
-      var featuresItem = item.offer.features[j];
-      var featuresClass = '.popup__feature--' + featuresItem;
-      card.querySelector(featuresClass).textContent = featuresItem;
-    }
+    item.offer.features.forEach(function (feature) {
+      var featuresClass = '.popup__feature--' + feature;
+      card.querySelector(featuresClass).textContent = feature;
+    });
 
     var featuresArr = card.querySelectorAll('.popup__feature');
 
-    for (var k = 0; k < featuresArr.length; k++) {
-      setDisplayNone(featuresArr[k]);
-    }
+    featuresArr.forEach(function (it) {
+      setDisplayNone(it);
+    });
 
     card.querySelector('.popup__description').textContent = item.offer.description;
 
